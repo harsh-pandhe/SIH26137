@@ -25,6 +25,7 @@ export function NetworkMap({ height = 560, showControls = true, compact = false 
   const [zoom, setZoom] = useState(1);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [dragging, setDragging] = useState<{ x: number; y: number } | null>(null);
+  const pinchRef = React.useRef<{ distance: number; zoom: number } | null>(null);
   const [layers, setLayers] = useState({ traffic: true, routes: true, congestion: true });
   const [hovered, setHovered] = useState<string | null>(null);
 
@@ -59,6 +60,37 @@ export function NetworkMap({ height = 560, showControls = true, compact = false 
   function onWheel(e: React.WheelEvent) {
     e.preventDefault();
     setZoom((z) => Math.min(2.5, Math.max(0.6, z - e.deltaY * 0.001)));
+  }
+
+  function touchDistance(touches: React.TouchList) {
+    const [a, b] = [touches[0], touches[1]];
+    return Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+  }
+
+  function onTouchStart(e: React.TouchEvent) {
+    if (e.touches.length === 2) {
+      pinchRef.current = { distance: touchDistance(e.touches), zoom };
+    } else if (e.touches.length === 1) {
+      const t = e.touches[0];
+      setDragging({ x: t.clientX - pan.x, y: t.clientY - pan.y });
+    }
+  }
+
+  function onTouchMove(e: React.TouchEvent) {
+    if (e.touches.length === 2 && pinchRef.current) {
+      e.preventDefault();
+      const dist = touchDistance(e.touches);
+      const scale = dist / pinchRef.current.distance;
+      setZoom(Math.min(2.5, Math.max(0.6, pinchRef.current.zoom * scale)));
+    } else if (e.touches.length === 1 && dragging) {
+      const t = e.touches[0];
+      setPan({ x: t.clientX - dragging.x, y: t.clientY - dragging.y });
+    }
+  }
+
+  function onTouchEnd() {
+    setDragging(null);
+    pinchRef.current = null;
   }
 
   return (
@@ -114,6 +146,7 @@ export function NetworkMap({ height = 560, showControls = true, compact = false 
         viewBox="0 0 1000 600"
         width="100%"
         height={height}
+        style={{ touchAction: "none", maxHeight: "min(70vh, " + height + "px)" }}
         onWheel={onWheel}
         onMouseDown={(e) => setDragging({ x: e.clientX - pan.x, y: e.clientY - pan.y })}
         onMouseMove={(e) => {
@@ -121,7 +154,10 @@ export function NetworkMap({ height = 560, showControls = true, compact = false 
         }}
         onMouseUp={() => setDragging(null)}
         onMouseLeave={() => setDragging(null)}
-        className="cursor-grab active:cursor-grabbing"
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        className="cursor-grab active:cursor-grabbing w-full"
       >
         <g transform={`translate(${pan.x} ${pan.y}) scale(${zoom})`} style={{ transformOrigin: "500px 300px" }}>
           {/* background grid */}

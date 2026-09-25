@@ -1,9 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { SimulationProvider } from "@/contexts/simulation-context";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Topbar } from "@/components/layout/topbar";
+import { AppShell } from "@/components/layout/app-shell";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -11,9 +10,21 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "FleetOps Command Center — SIH26137",
+  title: {
+    default: "FleetOps Command Center — SIH26137",
+    template: "%s — FleetOps",
+  },
   description:
     "Autonomous fleet operations command center prototype for SIH26137: Quantum-Inspired Intelligent Traffic Route Optimization using Metaheuristic Optimization.",
+  icons: {
+    icon: "/favicon.ico",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#020617",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -21,13 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${inter.variable} h-full`}>
       <body className="min-h-full bg-slate-950 text-slate-200 antialiased">
         <SimulationProvider>
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex-1 flex flex-col min-w-0">
-              <Topbar />
-              <main className="flex-1 overflow-y-auto p-5">{children}</main>
-            </div>
-          </div>
+          <AppShell>{children}</AppShell>
         </SimulationProvider>
       </body>
     </html>

@@ -38,7 +38,7 @@ export default function FleetPage() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {[...trucks, ...others].map((v) => {
           const Icon = TYPE_ICON[v.type];
           return (
@@ -94,36 +94,55 @@ export default function FleetPage() {
         <CardHeader>
           <CardTitle>Delivery Manifest</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <THead>
-              <tr>
-                <TH>ID</TH>
-                <TH>Node</TH>
-                <TH>Demand (kg)</TH>
-                <TH>Priority</TH>
-                <TH>Status</TH>
-              </tr>
-            </THead>
-            <tbody>
-              {deliveries.slice(0, 15).map((d) => (
-                <TR key={d.id}>
-                  <TD className="font-mono">{d.id}</TD>
-                  <TD>{d.nodeId}</TD>
-                  <TD>{d.demand}</TD>
-                  <TD>
-                    <Badge
-                      tone={d.priority === "high" ? "danger" : d.priority === "medium" ? "warning" : "neutral"}
-                    >
-                      {d.priority}
-                    </Badge>
-                  </TD>
-                  <TD>{d.delivered ? "Delivered" : "Pending"}</TD>
-                </TR>
-              ))}
-            </tbody>
-          </Table>
-          <div className="text-[11px] text-slate-600 px-3 py-2">
+        <CardContent className="sm:p-4 p-0">
+          {/* Mobile: stacked card list */}
+          <div className="sm:hidden divide-y divide-slate-800/60">
+            {deliveries.slice(0, 15).map((d) => (
+              <div key={d.id} className="px-4 py-3 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-mono text-slate-200">{d.id}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">
+                    {d.nodeId} · {d.demand} kg · {d.delivered ? "Delivered" : "Pending"}
+                  </div>
+                </div>
+                <Badge tone={d.priority === "high" ? "danger" : d.priority === "medium" ? "warning" : "neutral"}>
+                  {d.priority}
+                </Badge>
+              </div>
+            ))}
+          </div>
+          {/* Tablet/desktop: table */}
+          <div className="hidden sm:block">
+            <Table>
+              <THead>
+                <tr>
+                  <TH>ID</TH>
+                  <TH>Node</TH>
+                  <TH>Demand (kg)</TH>
+                  <TH>Priority</TH>
+                  <TH>Status</TH>
+                </tr>
+              </THead>
+              <tbody>
+                {deliveries.slice(0, 15).map((d) => (
+                  <TR key={d.id}>
+                    <TD className="font-mono">{d.id}</TD>
+                    <TD>{d.nodeId}</TD>
+                    <TD>{d.demand}</TD>
+                    <TD>
+                      <Badge
+                        tone={d.priority === "high" ? "danger" : d.priority === "medium" ? "warning" : "neutral"}
+                      >
+                        {d.priority}
+                      </Badge>
+                    </TD>
+                    <TD>{d.delivered ? "Delivered" : "Pending"}</TD>
+                  </TR>
+                ))}
+              </tbody>
+            </Table>
+          </div>
+          <div className="text-[11px] text-slate-600 px-4 sm:px-3 py-2">
             Showing 15 of {deliveries.length} deliveries.
           </div>
         </CardContent>
@@ -131,11 +150,11 @@ export default function FleetPage() {
 
       {selected && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4"
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-slate-900 border border-slate-700 rounded-lg w-full max-w-md p-5 space-y-4"
+            className="bg-slate-900 border border-slate-700 rounded-t-lg sm:rounded-lg w-full sm:max-w-md p-5 space-y-4 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between">
@@ -143,7 +162,11 @@ export default function FleetPage() {
                 <h2 className="text-base font-semibold text-slate-100">{selected.label}</h2>
                 <p className="text-xs text-slate-500 font-mono">{selected.id}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-slate-500 hover:text-slate-300">
+              <button
+                onClick={() => setSelected(null)}
+                className="text-slate-500 hover:text-slate-300 h-9 w-9 -m-2 flex items-center justify-center rounded-md hover:bg-slate-800/60"
+                aria-label="Close"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>

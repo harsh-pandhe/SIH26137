@@ -53,11 +53,11 @@ export default function ExperimentsPage() {
 
       {selected && (
         <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 sm:p-4"
           onClick={() => setSelected(null)}
         >
           <div
-            className="bg-slate-900 border border-slate-700 rounded-lg w-full max-w-2xl p-5 space-y-4 max-h-[85vh] overflow-y-auto"
+            className="bg-slate-900 border border-slate-700 rounded-t-lg sm:rounded-lg w-full sm:max-w-2xl p-5 space-y-4 max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between">
@@ -65,12 +65,16 @@ export default function ExperimentsPage() {
                 <h2 className="text-base font-semibold text-slate-100">{selected.id}</h2>
                 <p className="text-xs text-slate-500">{selected.timestamp} · seed {selected.seed}</p>
               </div>
-              <button onClick={() => setSelected(null)} className="text-slate-500 hover:text-slate-300">
+              <button
+                onClick={() => setSelected(null)}
+                className="text-slate-500 hover:text-slate-300 h-9 w-9 -m-2 flex items-center justify-center rounded-md hover:bg-slate-800/60"
+                aria-label="Close"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-[10px] uppercase text-slate-500 mb-1">Configuration</div>
                 <div className="space-y-1 text-slate-300">
@@ -104,7 +108,7 @@ export default function ExperimentsPage() {
 
             <div>
               <div className="text-[10px] uppercase text-slate-500 mb-1.5">Result</div>
-              <div className="grid grid-cols-4 gap-2 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
                 <ResultStat label="Travel Time" value={`${selected.result.travelTime} min`} />
                 <ResultStat label="Distance" value={`${selected.result.distance} km`} />
                 <ResultStat label="Cost" value={`₹${selected.result.cost}`} />
