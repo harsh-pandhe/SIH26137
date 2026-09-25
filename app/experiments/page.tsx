@@ -24,30 +24,55 @@ export default function ExperimentsPage() {
 
       <Card>
         <CardContent className="p-0">
-          <Table>
-            <THead>
-              <tr>
-                <TH>Run ID</TH>
-                <TH>Algorithm</TH>
-                <TH>Population</TH>
-                <TH>Iterations</TH>
-                <TH>Fitness</TH>
-                <TH>Timestamp</TH>
-              </tr>
-            </THead>
-            <tbody>
-              {experiments.map((e) => (
-                <TR key={e.id} className="cursor-pointer" onClick={() => setSelected(e)}>
-                  <TD className="font-mono text-cyan-400">{e.id}</TD>
-                  <TD>{e.algorithm}</TD>
-                  <TD className="font-mono">{e.population}</TD>
-                  <TD className="font-mono">{e.iterations}</TD>
-                  <TD className="font-mono">{e.fitness}</TD>
-                  <TD className="text-slate-500">{e.timestamp}</TD>
-                </TR>
-              ))}
-            </tbody>
-          </Table>
+          {/* Mobile: stacked card list */}
+          <div className="sm:hidden divide-y divide-slate-800/60">
+            {experiments.map((e) => (
+              <button
+                key={e.id}
+                type="button"
+                onClick={() => setSelected(e)}
+                className="w-full text-left px-4 py-3 hover:bg-slate-800/30 transition-colors"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-mono text-cyan-400">{e.id}</span>
+                  <span className="text-[11px] text-slate-500">{e.timestamp}</span>
+                </div>
+                <div className="mt-1.5 grid grid-cols-2 gap-x-3 gap-y-1 text-xs text-slate-400">
+                  <div>Algorithm: <span className="text-slate-300">{e.algorithm}</span></div>
+                  <div>Fitness: <span className="font-mono text-slate-300">{e.fitness}</span></div>
+                  <div>Population: <span className="font-mono text-slate-300">{e.population}</span></div>
+                  <div>Iterations: <span className="font-mono text-slate-300">{e.iterations}</span></div>
+                </div>
+              </button>
+            ))}
+          </div>
+          {/* Tablet/desktop: table */}
+          <div className="hidden sm:block">
+            <Table>
+              <THead>
+                <tr>
+                  <TH>Run ID</TH>
+                  <TH>Algorithm</TH>
+                  <TH>Population</TH>
+                  <TH>Iterations</TH>
+                  <TH>Fitness</TH>
+                  <TH>Timestamp</TH>
+                </tr>
+              </THead>
+              <tbody>
+                {experiments.map((e) => (
+                  <TR key={e.id} className="cursor-pointer" onClick={() => setSelected(e)}>
+                    <TD className="font-mono text-cyan-400">{e.id}</TD>
+                    <TD>{e.algorithm}</TD>
+                    <TD className="font-mono">{e.population}</TD>
+                    <TD className="font-mono">{e.iterations}</TD>
+                    <TD className="font-mono">{e.fitness}</TD>
+                    <TD className="text-slate-500">{e.timestamp}</TD>
+                  </TR>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 

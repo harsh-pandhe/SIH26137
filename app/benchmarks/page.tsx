@@ -22,6 +22,7 @@ import {
   Legend,
 } from "recharts";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export default function BenchmarksPage() {
   const results = useMemo(() => computeAlgorithmResults(), []);
@@ -67,37 +68,62 @@ export default function BenchmarksPage() {
         <CardHeader>
           <CardTitle>Comparison Table</CardTitle>
         </CardHeader>
-        <CardContent>
-          <Table>
-            <THead>
-              <tr>
-                <TH>Algorithm</TH>
-                <TH>Distance (km)</TH>
-                <TH>Travel Time (min)</TH>
-                <TH>Cost (₹)</TH>
-                <TH>Runtime (ms)</TH>
-                <TH>Fitness</TH>
-              </tr>
-            </THead>
-            <tbody>
-              {results.map((r) => (
-                <TR key={r.algorithm}>
-                  <TD className="font-medium text-slate-200">{r.algorithm}</TD>
-                  <TD className="font-mono">{r.distance}</TD>
-                  <TD className="font-mono">{r.travelTime}</TD>
-                  <TD className="font-mono">{r.cost.toLocaleString("en-IN")}</TD>
-                  <TD className="font-mono">{r.runtime.toLocaleString()}</TD>
-                  <TD className="font-mono">
-                    {r.algorithm === "QPSO" ? (
-                      <span className="text-emerald-400 font-semibold">{r.fitness}</span>
-                    ) : (
-                      r.fitness
-                    )}
-                  </TD>
-                </TR>
-              ))}
-            </tbody>
-          </Table>
+        <CardContent className="sm:p-4 p-0">
+          {/* Mobile: stacked card list */}
+          <div className="sm:hidden divide-y divide-slate-800/60">
+            {results.map((r) => (
+              <div key={r.algorithm} className="px-4 py-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-medium text-slate-200">{r.algorithm}</span>
+                  {r.algorithm === "QPSO" && <Badge tone="success">Best Fitness</Badge>}
+                </div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+                  <Stat label="Distance" value={`${r.distance} km`} />
+                  <Stat label="Travel Time" value={`${r.travelTime} min`} />
+                  <Stat label="Cost" value={`₹${r.cost.toLocaleString("en-IN")}`} />
+                  <Stat label="Runtime" value={`${r.runtime.toLocaleString()} ms`} />
+                  <Stat
+                    label="Fitness"
+                    value={String(r.fitness)}
+                    emphasize={r.algorithm === "QPSO"}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* Tablet/desktop: table */}
+          <div className="hidden sm:block">
+            <Table>
+              <THead>
+                <tr>
+                  <TH>Algorithm</TH>
+                  <TH>Distance (km)</TH>
+                  <TH>Travel Time (min)</TH>
+                  <TH>Cost (₹)</TH>
+                  <TH>Runtime (ms)</TH>
+                  <TH>Fitness</TH>
+                </tr>
+              </THead>
+              <tbody>
+                {results.map((r) => (
+                  <TR key={r.algorithm}>
+                    <TD className="font-medium text-slate-200">{r.algorithm}</TD>
+                    <TD className="font-mono">{r.distance}</TD>
+                    <TD className="font-mono">{r.travelTime}</TD>
+                    <TD className="font-mono">{r.cost.toLocaleString("en-IN")}</TD>
+                    <TD className="font-mono">{r.runtime.toLocaleString()}</TD>
+                    <TD className="font-mono">
+                      {r.algorithm === "QPSO" ? (
+                        <span className="text-emerald-400 font-semibold">{r.fitness}</span>
+                      ) : (
+                        r.fitness
+                      )}
+                    </TD>
+                  </TR>
+                ))}
+              </tbody>
+            </Table>
+          </div>
         </CardContent>
       </Card>
 
@@ -185,6 +211,17 @@ export default function BenchmarksPage() {
           </ResponsiveContainer>
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function Stat({ label, value, emphasize }: { label: string; value: string; emphasize?: boolean }) {
+  return (
+    <div>
+      <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
+      <div className={cn("font-mono", emphasize ? "text-emerald-400 font-semibold" : "text-slate-300")}>
+        {value}
+      </div>
     </div>
   );
 }

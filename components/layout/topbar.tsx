@@ -3,13 +3,15 @@
 import { useSimulation } from "@/contexts/simulation-context";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Play, Pause, RotateCcw, Activity, Menu, Radio } from "lucide-react";
+import { Play, Pause, RotateCcw, Activity, Menu, Radio, Search } from "lucide-react";
 import { useNavDrawer } from "@/components/layout/app-shell";
+import { useCommandPalette } from "@/components/layout/command-palette";
 
 export function Topbar() {
   const { demo, startDemo, pauseDemo, restartDemo, congestionIndex, activeIncident } =
     useSimulation();
   const { toggle } = useNavDrawer();
+  const { setOpen: setPaletteOpen } = useCommandPalette();
 
   const networkTone = activeIncident ? "danger" : congestionIndex > 45 ? "warning" : "success";
   const networkLabel = activeIncident
@@ -43,6 +45,22 @@ export function Topbar() {
       </div>
 
       <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <button
+          onClick={() => setPaletteOpen(true)}
+          className="hidden sm:inline-flex items-center gap-2 h-8 px-2.5 rounded-md border border-slate-800 text-slate-500 hover:text-slate-300 hover:border-slate-700 hover:bg-slate-800/50 transition-colors"
+          aria-label="Open command palette"
+        >
+          <Search className="h-3.5 w-3.5" />
+          <span className="text-xs">Search</span>
+          <kbd className="text-[10px] border border-slate-700 rounded px-1 py-0.5 leading-none">⌘K</kbd>
+        </button>
+        <button
+          onClick={() => setPaletteOpen(true)}
+          className="sm:hidden inline-flex h-9 w-9 items-center justify-center rounded-md text-slate-400 hover:bg-slate-800/60 hover:text-slate-200"
+          aria-label="Open command palette"
+        >
+          <Search className="h-4 w-4" />
+        </button>
         <span className="hidden md:inline text-[11px] uppercase tracking-wide text-slate-500 mr-1">
           Demo Mode
         </span>
